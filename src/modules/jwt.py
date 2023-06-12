@@ -51,5 +51,11 @@ class JWT:
         except jwt.exceptions.ExpiredSignatureError:
 
             return -1
+        
+        except jwt.exceptions.DecodeError:
+
+            return -1
+        
+        
 
         
