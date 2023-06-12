@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from .. import get_db
 from ..modules.jwt import JWT
-from . import schemas, service
+from . import schemas
 from ..users.service import get_user
 
 router = APIRouter(
@@ -75,16 +75,3 @@ async def read_users_me(Authorization: str | None = Header(), db: Session = Depe
         raise HTTPException(status.HTTP_404_NOT_FOUND)
 
     return user
-
-# TODO Temp endpoint for testing user creations
-@router.get("/create")
-async def create_users(db: Session = Depends(get_db)):
-
-    new_user = schemas.UserCreate(**{"name":"Test User", "ncu_id":"100000000", "is_active": True})
-    return service.create_user(db, new_user)
-
-# TODO Temp endpoint for testing user 
-@router.get("/{uid}", response_model=schemas.User)
-async def read_users(uid: int, db: Session = Depends(get_db)):
-
-    return service.exist_user(db, uid)

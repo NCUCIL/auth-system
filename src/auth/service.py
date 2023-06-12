@@ -5,7 +5,7 @@ import base64
 from sqlalchemy.orm import Session
 
 from ..users.schemas import UserCreate
-from ..users.service import get_user_by_ncu_id, create_user, get_user
+from ..users.service import get_user_by_ncu_id, create_user
 
 async def async_post(url: str, **kwargs) -> dict:
     """Async post request
