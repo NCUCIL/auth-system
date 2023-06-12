@@ -9,6 +9,10 @@ def get_user(db: Session, uid: int) -> models.Users:
 
     return db.query(models.Users).filter(models.Users.id == uid).first()
 
+def get_user_by_ncu_id(db: Session, ncu_id: str) -> models.Users:
+
+    return db.query(models.Users).filter(models.Users.ncu_id == ncu_id).first()
+
 def exist_user(db: Session, uid: int) -> bool:
     return False if get_user(db, uid) == None else True
 

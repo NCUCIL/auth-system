@@ -6,6 +6,32 @@ os.environ["STAGE"] = "TEST"
 from src import get_db
 from src.main import app
 from src.database import SessionLocal
+from src.users import models, schemas
+
+user1 = {
+    "id": 12345,
+    "name": "Test User",
+    "ncu_id": "100000000",
+    "is_active": True,
+    "permissions": []
+}
+USER1 = models.Users(**user1)
+
+class MockService:
+
+    def get_one_user(db, uid):
+        user = user1
+        user["id"] = uid
+        return models.Users(**user)
+    
+    def get_no_user(db, uid):
+        return None
+    
+    def create_user(db, user_create):
+        user = user1
+        user["ncu_id"]=user_create.ncu_id
+        user["name"]=user_create.name
+        return models.Users(**user)
 
 def override_get_db():
     try:

@@ -2,7 +2,20 @@ import os
 import aiohttp
 import base64
 
-async def async_post(url, **kwargs):
+from sqlalchemy.orm import Session
+
+from ..users.schemas import UserCreate
+from ..users.service import get_user_by_ncu_id, create_user, get_user
+
+async def async_post(url: str, **kwargs) -> dict:
+    """Async post request
+
+    Args:
+        url (str): the url target
+
+    Returns:
+        json: json response of the request
+    """
 
     async with aiohttp.ClientSession() as session:
 
@@ -12,7 +25,15 @@ async def async_post(url, **kwargs):
             
         return await fetch(url)
     
-async def async_get(url, **kwargs):
+async def async_get(url: str, **kwargs) -> dict:
+    """Async get request
+
+    Args:
+        url (str): The url target
+
+    Returns:
+        dict: json response
+    """
 
     async with aiohttp.ClientSession() as session:
 
@@ -22,7 +43,15 @@ async def async_get(url, **kwargs):
             
         return await fetch(url)
 
-async def get_token(code: str):
+async def get_token(code: str) -> str:
+    """Get access token by the code recieved from NCU Portal
+
+    Args:
+        code (str): recieved code string
+
+    Returns:
+        str: user info returned by NCU Portal
+    """
 
     client_id = os.getenv("PORTAL_OAUTH_ID")
     client_secret = os.getenv("PORTAL_OAUTH_SECRET")
@@ -41,7 +70,15 @@ async def get_token(code: str):
 
     return response.get('access_token', None)
 
-async def get_info(token: str):
+async def get_info(token: str) -> dict:
+    """Get user info by the access token
+
+    Args:
+        token (str): access token
+
+    Returns:
+        dict: json response of user info
+    """
 
     url = os.getenv("PORTAL_INFO_URL")
 
@@ -55,3 +92,24 @@ async def get_info(token: str):
         return None
 
     return response
+
+def ensure_user_existance(db: Session, ncu_id: str, name: str) -> int:
+    """Make sure that the user exist in the database
+
+    Args:
+        db (Session): db connection
+        ncu_id (str): user's ncu identifier
+        name (str): user's chinese name
+
+    Returns:
+        int: user id
+    """
+
+    user = get_user_by_ncu_id(db, ncu_id)
+
+    if user is not None:
+        return user.id
+    
+    user = create_user(db, UserCreate(ncu_id=ncu_id, name=name))
+
+    return user.id

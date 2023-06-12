@@ -1,22 +1,8 @@
 import pytest
 
+from .conftest import MockService, user1
+
 from src.users.service import exist_user, get_user_info
-
-USER1 = {
-    "id": 12345,
-    "name": "Test User",
-    "ncu_id": "100000000",
-    "is_valid": True
-}
-class MockService:
-
-    def get_one_user(db, uid):
-        user = USER1
-        user["id"] = uid
-        return user
-    
-    def get_no_user(db, uid):
-        return None
 
 @pytest.mark.parametrize("uid", [1])
 def test_user_exist(db, uid, mocker):
@@ -47,7 +33,9 @@ def test_get_user_info(db, jwt_token: str, mocker):
     
     response = get_user_info(db, jwt_token)
 
-    assert response == USER1
+    assert response.id == user1.get("id")
+    assert response.ncu_id == user1.get("ncu_id")
+    assert response.name == user1.get("name")
 
 def test_get_user_info_invalid(db, jwt_token, mocker):
 
