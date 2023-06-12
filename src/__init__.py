@@ -9,9 +9,6 @@ CONFIG: BaseConfig = config.get(os.getenv("STAGE", "DEV"))
 
 
 from .database import SessionLocal, engine
-from .users import models as user_models
-
-user_models.Base.metadata.create_all(bind=engine)
 
 def get_db():
     db = SessionLocal()

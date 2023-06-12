@@ -10,10 +10,16 @@ class BaseConfig:
     SQLALCHEMY_DATABASE_URI = ""
     STAGE=""
  
+class StagingConfig(BaseConfig):
+    STAGE="STAGE"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = f'postgresql://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@{os.getenv("POSTGRES_HOST")}:5432/auth-system'
+    openapi_url = None
+ 
 class DevelopmentConfig(BaseConfig):
     STAGE="DEV"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = f'postgresql://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_HOST")}:5432/auth-system'
+    SQLALCHEMY_DATABASE_URI = f'postgresql://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@{os.getenv("POSTGRES_HOST")}:5432/auth-system'
  
 class TestingConfig(BaseConfig):
     STAGE="TEST"
@@ -23,4 +29,5 @@ class TestingConfig(BaseConfig):
 config: BaseConfig = {
     'DEV': DevelopmentConfig,
     'TEST': TestingConfig,
+    'STAGE': StagingConfig
 }
