@@ -3,7 +3,7 @@ import json
 from freezegun import freeze_time
 from datetime import datetime, timedelta
 
-from src.lib.jwt import JWT 
+from src.modules.jwt import JWT 
 
 jwt = JWT()
 jwt.secret = "DEFAULT_SECRET_IS_32_BIT_LENGTH!"
