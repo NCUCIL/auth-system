@@ -1,6 +1,6 @@
 import os
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 class JWT:
 
@@ -29,7 +29,7 @@ class JWT:
             str: the encoded jwt
         """
 
-        return jwt.encode({"uid": uid, "exp": int((datetime.utcnow() + timedelta(seconds=self.expire_time)).timestamp())}, self.secret, self.algorithm)
+        return jwt.encode({"uid": uid, "exp": int((datetime.now(tz=timezone.utc) + timedelta(seconds=self.expire_time)).timestamp())}, self.secret, self.algorithm)
     
     def validate(self, jwt_token: str) -> int:
         """Validate the jwt token and returns the data
