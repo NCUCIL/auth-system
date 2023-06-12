@@ -29,8 +29,6 @@ class JWT:
             str: the encoded jwt
         """
 
-        print(datetime.utcnow())
-
         return jwt.encode({"uid": uid, "exp": int((datetime.utcnow() + timedelta(seconds=self.expire_time)).timestamp())}, self.secret, self.algorithm)
     
     def validate(self, jwt_token: str) -> int:
