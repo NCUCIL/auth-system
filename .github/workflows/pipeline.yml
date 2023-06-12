@@ -78,14 +78,14 @@ jobs:
       - name: Host key verifycation
         run: ssh-keyscan -H ${{ secrets.STAGE_HOST }} > ~/.ssh/known_hosts
 
-      - name: Debug
-        run: cat ~/.ssh/known_hosts
+      - name: Remove .git folder
+        run: yes | rm -rf .git
 
       - name: Create staging envs 
         run: |
           cp .env.sample .stage.env
-          # sed -i "s/build: ./build: harbor.tsmc.n0b.me\/n0ball\/${{ env.IMG_NAME }}:${{ github.sha }}/g" docker-compose.yml
-          sed -i "s/build: ./build: harbor.tsmc.n0b.me\/n0ball\/${{ env.IMG_NAME }}:latest/g" docker-compose.yml
+          # sed -i "s/image: auth-system:latest/image: harbor.tsmc.n0b.me\/n0ball\/${{ env.IMG_NAME }}:${{ github.sha }}/g" docker-compose.yml
+          sed -i "s/image: auth-system:latest/image: harbor.tsmc.n0b.me\/n0ball\/${{ env.IMG_NAME }}:latest/g" docker-compose.yml
           sed -i "s/PORTAL_OAUTH_ID=/PORTAL_OAUTH_ID=${{ secrets.PORTAL_OAUTH_ID }}/g" .stage.env
           sed -i "s/PORTAL_OAUTH_SECRET=/PORTAL_OAUTH_SECRET=${{ secrets.PORTAL_OAUTH_SECRET }}/g" .stage.env
           sed -i "s/DEFAULT_SECRET_IS_32_BIT_LENGTH\!/$(openssl rand -hex 16)/g" .stage.env
@@ -100,4 +100,4 @@ jobs:
           host: ${{ secrets.STAGE_HOST }}
           username: ${{ secrets.STAGE_USER }}
           key: ${{ secrets.STAGE_KEY }}
-          script: cd ${{ env.IMG_NAME }} && docker compose up -d
+          script: cd ${{ env.IMG_NAME }} && docker compose -f stage-docker-compose.yml up -d

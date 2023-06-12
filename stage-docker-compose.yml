@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+
+  auth-system:
+    image: auth-system:latest
+    env_file: 
+      - .stage.env
+    expose: 
+      - 8000
+    depends_on:
+      - postgresql
+    networks:
+      - default
+      - nginx-bridge
+
+  postgresql:
+    image: postgres
+    restart: always
+    env_file:
+      - .stage.env
+    expose:
+      - 5432
+    networks:
+      - default
+
+  adminer:
+    image: adminer
+    restart: always
+    expose:
+      - 8080
+    networks:
+      - default
+      - nginx-bridge
+
+networks:
+  default:
+  nginx-bridge:
+    external: true

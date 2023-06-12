@@ -5,7 +5,7 @@ services:
   auth-system:
     build: .
     env_file: 
-      - .stage.env
+      - .env
     ports: 
       - 8000:8000
     depends_on:
@@ -15,7 +15,7 @@ services:
     image: postgres
     restart: always
     env_file:
-      - .stage.env
+      - .env
     expose:
       - 5432
 
