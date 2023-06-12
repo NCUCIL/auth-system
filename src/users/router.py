@@ -53,7 +53,7 @@ async def create_users(db: Session = Depends(get_db)):
     return service.create_user(db, new_user)
 
 # TODO Temp endpoint for testing user 
-@router.get("/{uid}")
+@router.get("/{uid}", response_model=schemas.User)
 async def read_users(uid: int, db: Session = Depends(get_db)):
 
     return service.exist_user(db, uid)

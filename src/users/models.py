@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 
 from ..database import Base
 
-class User(Base):
+class Users(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -11,7 +11,7 @@ class User(Base):
     ncu_id = Column(String, unique=True, index=True)
     is_active = Column(Boolean, default=True)
 
-    permission_relations = relationship("UserPermissions", back_populates="user")
+    permissions = relationship("Permissions", secondary="user_permissions", back_populates="users")
 
 
 class Permissions(Base):
@@ -21,7 +21,7 @@ class Permissions(Base):
     name = Column(String, index=True)
     description = Column(String, default="")
 
-    permission_relations = relationship("UserPermissions", back_populates="permission")
+    users = relationship("Users", secondary="user_permissions", back_populates="permissions")
 
 class UserPermissions(Base):
     __tablename__ = "user_permissions"
@@ -29,6 +29,3 @@ class UserPermissions(Base):
     id = Column(Integer, primary_key=True, index=True)
     uid = Column(Integer, ForeignKey("users.id"))
     pid = Column(Integer, ForeignKey("permissions.id") )
-
-    user = relationship("User", back_populates="permission_relations")
-    permission = relationship("Permissions", back_populates="permission_relations")

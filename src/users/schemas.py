@@ -1,14 +1,15 @@
+from typing import List
 from pydantic import BaseModel
 
 class PermissionBase(BaseModel):
-    pass
+    name: str
+    description: str = ""
 
 class UserBase(BaseModel):
     name: str
 
 class UserPermissionsBase(BaseModel):
-    name: str
-    descipriton: str = ""
+    pass
 
 
 class PermissionCreate(PermissionBase):
@@ -21,9 +22,12 @@ class UserPermissionsCreate(UserPermissionsBase):
     uid: int
     pid: int
 
+class PermissionOut(PermissionBase):
+
+    class Config:
+        orm_mode = True
 
 class Permission(PermissionBase):
-    pass
     users: list[UserBase] = []
 
     class Config:
@@ -31,7 +35,7 @@ class Permission(PermissionBase):
 
 class User(UserBase):
     ncu_id: str
-    permissions: list[UserPermissionsBase] = []
+    permissions: List[PermissionOut] = []
 
     class Config:
         orm_mode = True
