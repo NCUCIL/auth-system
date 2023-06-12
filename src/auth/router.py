@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, HTTPException
 
 from .service import get_token, get_info
 
@@ -23,5 +23,6 @@ async def auth_callBack(code, state):
         raise HTTPException(500, "NCU Oauth2 Failed Requesting user info")
 
     return {
-        "data": info
+        "data": info,
+        "state": state
     }
