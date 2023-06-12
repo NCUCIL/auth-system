@@ -38,9 +38,9 @@ FAKE_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEyMzQ1LCJleHAiOjE2ODY
 """
 
 @pytest.fixture
-def jwt():
+def jwt() -> JWT:
     return mock_jwt
 
 @pytest.fixture
-def jwt_token():
+def jwt_token() -> str:
     return FAKE_JWT
