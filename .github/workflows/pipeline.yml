@@ -1,5 +1,8 @@
 name: Pipeline
 
+env:
+  IMG_NAME: auth-system
+
 on:
   push:
     branches: [ main, dev ]
@@ -31,8 +34,6 @@ jobs:
     if: startsWith(github.ref, 'refs/tags')
     needs: [test]
     runs-on: ubuntu-latest
-    env:
-      IMG_NAME: auth-system
 
     steps:
 
@@ -74,8 +75,11 @@ jobs:
           key: ${{ secrets.STAGE_KEY }}
           known_hosts: ${{ secrets.STAGE_HOST }}
 
+      - name: Host key verifycation
+        run: ssh-keyscan -H ${{ secrets.STAGE_HOST }} > ~/.ssh/known_hosts
+
       - name: Debug
-        run: ls -al
+        run: cat ~/.ssh/known_hosts
 
       - name: Create staging envs 
         run: |
@@ -88,7 +92,7 @@ jobs:
           sed -i "s/change_me/$(openssl rand -hex 16)/g" .stage.env
 
       - name: Deploy with rsync
-        run: rsync -avz . ${{ secrets.STAGE_USER }}@${{ secrets.STAGE_HOST }}:/home/${{ secrets.STAGE_USER }}/${{ env.IMG_NAME }}
+        run: rsync -avz -e "ssh" . ${{ secrets.STAGE_USER }}@${{ secrets.STAGE_HOST }}:/home/${{ secrets.STAGE_USER }}/${{ env.IMG_NAME }}
     
       - name: run docker compose on the remote server to deploy
         uses: appleboy/ssh-action@v0.1.10
