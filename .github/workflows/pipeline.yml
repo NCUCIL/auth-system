@@ -70,6 +70,9 @@ jobs:
           key: ${{ secrets.STAGE_KEY }}
           known_hosts: ${{ secrets.STAGE_HOST }}
 
+      - name: Debug
+        run: ls -al
+
       - name: Create staging envs 
         run: |
           cp .env.sample .stage.env
