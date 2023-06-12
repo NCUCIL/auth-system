@@ -45,7 +45,7 @@ jobs:
           echo "github.event.base_ref -> ${{ github.event.base_ref }}"
           echo "github.ref_type -> ${{ github.ref_type }}"
   
-      - name: Log in to Harbot
+      - name: Log in to Harbor
         uses: docker/login-action@v1
         with:
           registry: https://harbor.tsmc.n0b.me
@@ -58,3 +58,34 @@ jobs:
           context: .
           push: ${{ github.event.base_ref =='refs/heads/main' }}
           tags: harbor.tsmc.n0b.me/n0ball/${{ env.IMG_NAME }}:latest,harbor.tsmc.n0b.me/n0ball/${{ env.IMG_NAME }}:${{ github.sha }}
+
+  deploy-stage:
+    name: Deploy on stage server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.STAGE_KEY }}
+          known_hosts: ${{ secrets.STAGE_HOST }}
+
+      - name: Create staging envs 
+        run: |
+          cp .env.sample .stage.env
+          sed -i "s/build: ./build: harbor.tsmc.n0b.me\/n0ball\/${{ env.IMG_NAME }}:${{ github.sha }}/g" docker-compose.yml
+          sed -i "s/PORTAL_OAUTH_ID=/PORTAL_OAUTH_ID=${{ secrets.PORTAL_OAUTH_ID }}/g" .stage.env
+          sed -i "s/PORTAL_OAUTH_SECRET=/PORTAL_OAUTH_SECRET=${{ secrets.PORTAL_OAUTH_SECRET }}/g" .stage.env
+          sed -i "s/DEFAULT_SECRET_IS_32_BIT_LENGTH\!/$(openssl rand -hex 16)/g" .stage.env
+          sed -i "s/change_me/$(openssl rand -hex 16)/g" .stage.env
+
+      - name: Deploy with rsync
+        run: rsync -avz . ${{ secrets.STAGE_USER }}@${{ secrets.STAGE_HOST }}:/home/${{ secrets.STAGE_USER }}/${{ env.IMG_NAME }}
+    
+      - name: run docker compose on the remote server to deploy
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.STAGE_HOST }}
+          username: ${{ secrets.STAGE_USER }}
+          key: ${{ secrets.STAGE_KEY }}
+          script: docker compose up -d
