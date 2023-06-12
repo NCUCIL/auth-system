@@ -62,6 +62,8 @@ jobs:
 
   deploy-stage:
     name: Deploy on stage server
+    if: startsWith(github.ref, 'refs/tags') && github.event.base_ref =='refs/heads/main'
+    needs: [build]
     runs-on: ubuntu-latest
 
     steps:
@@ -84,8 +86,7 @@ jobs:
       - name: Create staging envs 
         run: |
           cp .env.sample .stage.env
-          # sed -i "s/image: auth-system:latest/image: harbor.tsmc.n0b.me\/n0ball\/${{ env.IMG_NAME }}:${{ github.sha }}/g" stage-docker-compose.yml
-          sed -i "s/image: auth-system:latest/image: harbor.tsmc.n0b.me\/n0ball\/${{ env.IMG_NAME }}:latest/g" stage-docker-compose.yml
+          sed -i "s/image: auth-system:latest/image: harbor.tsmc.n0b.me\/n0ball\/${{ env.IMG_NAME }}:${{ github.sha }}/g" stage-docker-compose.yml
           sed -i "s/PORTAL_OAUTH_ID=/PORTAL_OAUTH_ID=${{ secrets.PORTAL_OAUTH_ID }}/g" .stage.env
           sed -i "s/PORTAL_OAUTH_SECRET=/PORTAL_OAUTH_SECRET=${{ secrets.PORTAL_OAUTH_SECRET }}/g" .stage.env
           sed -i "s/DEFAULT_SECRET_IS_32_BIT_LENGTH\!/$(openssl rand -hex 16)/g" .stage.env
