@@ -24,9 +24,10 @@ jobs:
 
   build:
     name: Build and push docker images
+    needs: [test]
     runs-on: ubuntu-latest
     env:
-      IMG_NAME: ${{ github.repository }}
+      IMG_NAME: ${{ github.action.repository }}
 
     steps:
 
