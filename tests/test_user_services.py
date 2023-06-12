@@ -27,6 +27,8 @@ def test_user_not_exist(db, uid, mocker):
     assert response == False
 
 def test_get_user_info(db, jwt_token: str, mocker):
+    """REF.2.AS.8
+    """
 
     mocker.patch("src.modules.jwt.JWT.validate", return_value=12345)
     mocker.patch("src.users.service.get_user", MockService.get_one_user)
@@ -38,7 +40,9 @@ def test_get_user_info(db, jwt_token: str, mocker):
     assert response.name == user1.get("name")
 
 def test_get_user_info_invalid(db, jwt_token, mocker):
-
+    """REF.2.AS.8
+    """
+    
     mocker.patch("src.modules.jwt.JWT.validate", return_value=-1)
     mocker.patch("src.users.service.get_user", MockService.get_one_user)
     
