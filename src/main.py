@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+from . import router, CONFIG, BaseConfig
 
-@app.get('/')
-async def root():
-    return {"message": "Hello, World"}
+app = FastAPI(**{**BaseConfig.__dict__, **CONFIG.__dict__})
+
+app.include_router(router)
