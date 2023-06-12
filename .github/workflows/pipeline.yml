@@ -100,4 +100,4 @@ jobs:
           host: ${{ secrets.STAGE_HOST }}
           username: ${{ secrets.STAGE_USER }}
           key: ${{ secrets.STAGE_KEY }}
-          script: docker compose up -d
+          script: cd ${{ env.IMG_NAME }} && docker compose up -d
