@@ -73,7 +73,8 @@ jobs:
       - name: Create staging envs 
         run: |
           cp .env.sample .stage.env
-          sed -i "s/build: ./build: harbor.tsmc.n0b.me\/n0ball\/${{ env.IMG_NAME }}:${{ github.sha }}/g" docker-compose.yml
+          # sed -i "s/build: ./build: harbor.tsmc.n0b.me\/n0ball\/${{ env.IMG_NAME }}:${{ github.sha }}/g" docker-compose.yml
+          sed -i "s/build: ./build: harbor.tsmc.n0b.me\/n0ball\/${{ env.IMG_NAME }}:latest/g" docker-compose.yml
           sed -i "s/PORTAL_OAUTH_ID=/PORTAL_OAUTH_ID=${{ secrets.PORTAL_OAUTH_ID }}/g" .stage.env
           sed -i "s/PORTAL_OAUTH_SECRET=/PORTAL_OAUTH_SECRET=${{ secrets.PORTAL_OAUTH_SECRET }}/g" .stage.env
           sed -i "s/DEFAULT_SECRET_IS_32_BIT_LENGTH\!/$(openssl rand -hex 16)/g" .stage.env
